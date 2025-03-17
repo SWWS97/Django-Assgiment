@@ -16,13 +16,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from todo.views import todo_list, todo_info
+from todo.views import todo_list, todo_info, todo_create, todo_update, todo_delete
 from member.views import signup
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', todo_list, name='todo_list'),
+    path('todo/', todo_list, name='todo_list'),
     path('todo/<int:todo_id>/', todo_info, name='todo_info'),
+
+    # login
     path('accounts/', include('django.contrib.auth.urls')),   # django 내장기능
     path('accounts/signup/', signup, name='signup'),
+
+    # crud
+    path('todo/create/', todo_create, name='todo_create'),
+    path('todo/<int:toodo_id>/update/', todo_update, name='todo_update'),
+    path('todo/<int:todo_id>/delete/', todo_delete, name='todo_delete'),
 ]
