@@ -1,30 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Info Page</title>
-    <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    />
-    <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/boot-strap-icons.css"
-    >
-</head>
-<body>
-    <div class="container">
-        <h1>{{ data.title }}</h1>
-        <table>
-            {% for key, value in data.items %}
-                {% if key != 'title' %}
-                    <tr>
-                        <th>{{ key }}</th>
-                        <td>{{ value }}</td>
-                    </tr>
-                {% endif %}
-            {% endfor %}
-        </table>
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{{ todo.title }}</h1>
+
+    {% if request.user == todo.user %}
+        <div style="text-align: right">
+             <a href="{% url 'todo_update' todo.pk %}">수정</a>
+
+            <form action="{% url 'todo_delete' todo.pk %}" method="POST" style="display: inline">
+                {% csrf_token %}
+                <button>삭제</button>
+            </form>
+        </div>
+    {% endif %}
+
+    <div style="text-align: right">
+        {{ todo.author.username }}
     </div>
-</body>
-</html>
+    <hr>
+    <p>{{ todo.description }}</p>
+
+    <a href="{% url 'todo_list' %}">목록으로 돌아가기</a>
+{% endblock %}
+
