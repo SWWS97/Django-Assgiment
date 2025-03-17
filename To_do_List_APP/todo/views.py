@@ -13,7 +13,7 @@ from django.urls import reverse
 
 @login_required
 def todo_list(request):
-    todos = Todo.objects.filter(user_id=request.user.id)
+    todos = Todo.objects.filter(user_id=request.user.id).order_by('-created_at')
 
     q = request.GET.get('q')
     if q:
@@ -55,7 +55,7 @@ def todo_create(request):
         todo.save()
 
         # return redirect(reverse('todo_info', kwargs={'pk': todo.pk}))
-        return redirect('todo_list', todo_id=todo.id) # 직접 뷰 이름과 매개변수를 전달
+        return redirect('todo_info', todo_id=todo.id) # 직접 뷰 이름과 매개변수를 전달
 
     context = {
         'form' : form,
@@ -67,13 +67,13 @@ def todo_create(request):
 
 @login_required
 def todo_update(request, todo_id):
-    todo = get_object_or_404(Todo, id=todo_id, user=request.uesr)
+    todo = get_object_or_404(Todo, id=todo_id, user=request.user)
 
     form = TodoUpdateForm(request.POST or None, instance=todo)  # 사용자가 입력한 값으로 폼을 채움, 아직 수정,저장 된건 아님
     if form.is_valid(): # 입력한 폼이 유효한지 검사
         form.save()     # 유효하면 기존 todo 객체를 업데이트 (DB에 저장)
         # return redirect(reverse('todo_info', kwargs={'pk': todo.pk}))
-        return redirect('todo_info', pk=todo.pk) # 수정한 해당 상세 페이지(todo/pk/로 이동)
+        return redirect('todo_info', todo_id=todo.pk) # 수정한 해당 상세 페이지(todo/pk/로 이동)
 
     context = {
         'form' : form,

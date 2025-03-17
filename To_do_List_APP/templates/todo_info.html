@@ -2,7 +2,7 @@
 {% block content %}
     <h1>{{ todo.title }}</h1>
 
-    {% if request.user == todo.author %}
+    {% if request.user == todo.user %}
         <div style="text-align: right">
              <a href="{% url 'todo_update' todo.pk %}">수정</a>
 
