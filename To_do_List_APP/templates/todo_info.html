@@ -2,23 +2,32 @@
 {% block content %}
     <h1>{{ todo.title }}</h1>
 
-    {% if request.user == todo.user %}
+    {% if request.user == todo.user or request.user.is_superuser%}
         <div style="text-align: right">
-             <a href="{% url 'todo_update' todo.pk %}">수정</a>
+             <a href="{% url 'todo:update' todo.pk %}">수정</a>
 
-            <form action="{% url 'todo_delete' todo.pk %}" method="POST" style="display: inline">
+            <form id="delete_form" action="{% url 'todo:delete' todo.pk %}" method="POST" style="display: inline">
                 {% csrf_token %}
-                <button>삭제</button>
+                <button type="submit" id="delete_btn">삭제</button>
             </form>
         </div>
     {% endif %}
 
     <div style="text-align: right">
-        {{ todo.author.username }}
+        {{ todo.user.username }}
     </div>
     <hr>
     <p>{{ todo.description }}</p>
 
-    <a href="{% url 'todo_list' %}">목록으로 돌아가기</a>
+    <a href="{% url 'todo:list' %}">목록으로 돌아가기</a>
 {% endblock %}
 
+{% block js %}
+    <script>
+        document.querySelector('#delete_btn').addEventListener('click', function() {
+            if(confirm('삭제 하시겠습니까?')) {
+                document.querySelector('#delete_form').submit();
+            }
+        })
+    </script>
+{% endblock %}

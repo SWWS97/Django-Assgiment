@@ -21,15 +21,12 @@ from member.views import signup
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('todo/', todo_list, name='todo_list'),
-    path('todo/<int:todo_id>/', todo_info, name='todo_info'),
+
+   # include
+    path('', include('todo.urls')),
+    path('fb/', include('todo.fbv_urls')),
 
     # login
     path('accounts/', include('django.contrib.auth.urls')),   # django 내장기능
     path('accounts/signup/', signup, name='signup'),
-
-    # crud
-    path('todo/create/', todo_create, name='todo_create'),
-    path('todo/<int:todo_id>/update/', todo_update, name='todo_update'),
-    path('todo/<int:todo_id>/delete/', todo_delete, name='todo_delete'),
 ]
