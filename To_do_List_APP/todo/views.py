@@ -55,7 +55,7 @@ def todo_create(request):
         todo.save()
 
         # return redirect(reverse('todo_info', kwargs={'pk': todo.pk}))
-        return redirect('todo_info', todo_id=todo.id) # 직접 뷰 이름과 매개변수를 전달
+        return redirect('todo:info', todo_id=todo.id) # 직접 뷰 이름과 매개변수를 전달
 
     context = {
         'form' : form,
@@ -73,7 +73,7 @@ def todo_update(request, todo_id):
     if form.is_valid(): # 입력한 폼이 유효한지 검사
         form.save()     # 유효하면 기존 todo 객체를 업데이트 (DB에 저장)
         # return redirect(reverse('todo_info', kwargs={'pk': todo.pk}))
-        return redirect('todo_info', todo_id=todo.pk) # 수정한 해당 상세 페이지(todo/pk/로 이동)
+        return redirect('todo:info', todo_id=todo.pk) # 수정한 해당 상세 페이지(todo/pk/로 이동)
 
     context = {
         'form' : form,
@@ -91,7 +91,7 @@ def todo_delete(request, todo_id):
     todo.delete()
 
     # return redirect(reverse('todo_list'))
-    return redirect('todo_list')
+    return redirect('todo:list')
 
 
 

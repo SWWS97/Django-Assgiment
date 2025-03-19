@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
+from django.urls import reverse
 
 
 class Todo(models.Model):
@@ -15,3 +16,7 @@ class Todo(models.Model):
 
     def __str__(self):
         return self.title
+
+    # cd_views.py에서 사용하던 def get_success_url(self): 대신 models.py에 만들어 놓으면 cd_views.py에서 사용하던 model = Todo에서 model을 불러올때 알아서 get_absolute_url(self) 함수를 사용 한다
+    # def get_absolute_url(self):
+    #     return reverse('todo:detail', kwargs={'pk': self.pk})

@@ -23,7 +23,7 @@ def login(request, django_login=None):
 
     if form.is_valid():
         django_login(request, form.get_user())
-        return redirect(reverse('todo_list'))
+        return redirect(reverse('todo:list'))
 
     context = {
         'form': form

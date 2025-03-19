@@ -4,13 +4,13 @@
 
 
         <p style="text-align: right">
-            <a href="{% url 'todo_create' %}">생성</a>
+            <a href="{% url 'todo:create' %}">생성</a>
         </p>
 
-        {% for blog in page_object %}
+        {% for todo in object_list %}
             <p>
-                <a href="{% url 'todo_info' blog.pk %}">  <!-- blog.id 이렇게 해도됨 !-->
-                    ({{ blog.id }}){{ blog.title }} <span>({{ blog.author.username }})</span>- <small>{{ blog.created_at | date:"Y-m-d" }}</small>
+                <a href="{% url 'todo:info' todo.pk %}">  <!-- blog.id 이렇게 해도됨 !-->
+                    ({{ todo.id }}){{ todo.title }} <span>({{ todo.user.username }})</span>- <small>{{ todo.created_at | date:"Y-m-d" }}</small>
                 </a>
             </p>
         {% endfor %}
