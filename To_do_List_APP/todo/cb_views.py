@@ -1,10 +1,12 @@
+from django.core.paginator import Paginator
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import request, Http404, HttpResponseRedirect
 
-from todo.models import Todo
+from todo.form import CommentForm, TodoForm, TodoUpdateForm
+from todo.models import Todo, Comment
 
 
 class TodoListView(LoginRequiredMixin,ListView):
@@ -50,9 +52,14 @@ class TodoDetailView(LoginRequiredMixin, DetailView):
 
         return self.object
 
-    def get_context_dat(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context = {'todo': self.object.__dict__}
+    def get_context_data(self, **kwargs):
+        comments = self.object.comments.order_by("-created_at")
+        paginator = Paginator(comments, 5)
+        context = {
+            'todo' : self.object.__dict__,
+            'comment_form' : CommentForm(),
+            'page_obj' : paginator.get_page(self.request.GET.get('page')),
+        }
 
         return context
 
@@ -60,7 +67,8 @@ class TodoDetailView(LoginRequiredMixin, DetailView):
 class TodoCreateView(LoginRequiredMixin, CreateView):
     model = Todo
     template_name = 'todo_create.html'
-    fields = ('title', 'description')
+    form_class = TodoForm
+
 
     def form_valid(self, form):
         self.object = form.save(commit=False)
@@ -76,7 +84,7 @@ class TodoCreateView(LoginRequiredMixin, CreateView):
 class TodoUpdateView(LoginRequiredMixin, UpdateView):
     model = Todo
     template_name = 'todo_update.html'
-    fields = ['title', 'description','is_completed']
+    form_class = TodoUpdateForm
     pk_url_kwarg = 'todo_id'
 
     def get_object(self, queryset=None):
@@ -105,6 +113,5 @@ class TodoDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_success_url(self):  # "FBV"에서 reverse 부분
         return reverse_lazy('todo:list')
-
 
 

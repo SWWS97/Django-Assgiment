@@ -1,36 +1,33 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Todo Project</title>
-    <link
-        rel="stylesheet"
-        href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-    />
-    <link
-            rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css"
-    >
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
 </head>
 <body>
-        <nav style="display: flex; justify-content: space-between">
-            <div>
-                <a href="{% url 'todo:list' %}">홈으로 가기</a>
-            </div>
-            <div style="text-align: right">
-                {% if request.user.is_authenticated %}
-                <form action="{% url 'logout' %}" method="POST" style="display: inline">
-                    {% csrf_token %}
-                    <button>로그아웃</button>
-                </form>
-                {{ request.user.username }}
-            {% else %}
-                 <a href="{% url 'signup' %}">회원가입</a>
-                 <a href="{% url 'login' %}">로그인</a>
-            {% endif %}
-            </div>
-        </nav>
+    <nav class="d-flex justify-content-between py-2 px-4 bg-black text-white">
+        <div>
+            <a class="text-decoration_none text-white" href="{% url 'todo:list' %}">홈으로 가기</a>
+        </div>
+        <div style="text-align: right">
+            {% if request.user.is_authenticated %}
+            <form action="{% url 'logout' %}" method="POST" class="d-inline">
+                {% csrf_token %}
+                <button class="btn btn-danger btn-sm">로그아웃</button>
+            </form>
+            {{ request.user.username }}
+        {% else %}
+             <a href="{% url 'signup' %}">회원가입</a>
+             <a href="{% url 'login' %}">로그인</a>
+        {% endif %}
+        </div>
+    </nav>
+    <div class="container">
         {% block content %}{% endblock %}
-        {% block js %}{% endblock %}
+    </div>
+    <script src="{% static 'js/bootstrap.bundle.js' %}"></script>
+    {% block js %}{% endblock %}
 </body>
 </html>
