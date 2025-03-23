@@ -1,33 +1,105 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>{{ todo.title }}</h1>
-
-    {% if request.user == todo.user or request.user.is_superuser%}
-        <div style="text-align: right">
-             <a href="{% url 'todo:update' todo.pk %}">수정</a>
-
-            <form id="delete_form" action="{% url 'todo:delete' todo.pk %}" method="POST" style="display: inline">
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 20px;
+    }
+    .custom-container {
+        max-width: 600px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+    input[type='text'] {
+        height: 2vh;
+    }
+    .comment-list-item {
+        padding: 10px;
+        margin: 5px 0;
+        background: #eaeaea;
+        border-radius: 5px;
+        transition: background 0.3s;
+    }
+</style>
+<div class="mt-lg-5 custom-container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1>{{ todo.title }}</h1>
+        <div class="d-flex">
+            <button class="btn btn-primary me-2" onclick="location.href='{% url 'todo:update' todo.id %}'">수정하기</button>
+            <form method="POST" action="{% url 'todo:delete' todo.id %}">
                 {% csrf_token %}
-                <button type="submit" id="delete_btn">삭제</button>
+                <button id="delete-button" type="submit" class="btn btn-danger">삭제하기</button>
             </form>
         </div>
-    {% endif %}
-
-    <div style="text-align: right">
-        {{ todo.user.username }}
     </div>
+    <table class="table">
+        {% for key, value in todo.items %}
+            {% if key != 'title' and key != 'id' and key != 'user_id' and key != '_state' and key != '_prefetched_objects_cache'%}
+                <tr>
+                    <th class="bg-light">{{ key }}</th>
+                    <td>{{ value | safe }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+</div>
+<div class="custom-container mt-lg-2">
+    <h2>Comment</h2>
     <hr>
-    <p>{{ todo.description }}</p>
-
-    <a href="{% url 'todo:list' %}">목록으로 돌아가기</a>
-{% endblock %}
-
-{% block js %}
-    <script>
-        document.querySelector('#delete_btn').addEventListener('click', function() {
-            if(confirm('삭제 하시겠습니까?')) {
-                document.querySelector('#delete_form').submit();
-            }
-        })
-    </script>
+    <form method="POST" action="{% url 'todo:comment_create' todo.id %}" class="d-flex justify-content-evenly align-items-center">
+        {% csrf_token %}
+        {{ comment_form.as_p }}
+        <button class="btn btn-primary">댓글달기</button>
+    </form>
+    <ul class="list-unstyled" id="comment_wrapper">
+    {% for comment in page_obj %}
+        <li class="comment-list-item container-fluid">
+            <div class="ps-2 d-flex justify-content-between align-items-center">
+                <p class="mb-0">{{ comment.user }}</p>
+                {% if request.user == comment.user or request.user.is_staff %}
+                <div class="text-decoration-none a-group">
+                    <form method="POST" action="{% url 'todo:comment_delete' comment.id %}">
+                        {% csrf_token %}
+                        <div class="btn-group-sm">
+                            <button class="btn btn-primary" type="button" onclick="modify_view({{ comment.id }})">수정하기</button>
+                            <button type=submit class="btn btn-danger">삭제하기</button>
+                        </div>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            <hr>
+            <div>
+                <p class="p-lg-2">{{ comment.message }}</p>
+                <p class="text-end">{{ comment.created_at }}</p>
+            </div>
+            <form id="comment_modify_form_{{ comment.id }}" style="display: none" method="POST" action="{% url 'todo:comment_update' comment.id %}">
+                {% csrf_token %}
+                {{ comment_form.as_p }}
+                <button class="btn btn-primary btn-sm">저장</button>
+            </form>
+        </li>
+    {% endfor %}
+    </ul>
+    {% include 'pagination.html' with fragment='comment_wrapper' %}
+</div>
+<script>
+    function modify_view(commentId) {
+        const modifyForm = document.getElementById(`comment_modify_form_${commentId}`);
+        if (modifyForm.style.display === "none") {
+            modifyForm.style.display = ""
+        } else if (modifyForm.style.display === "") {
+            modifyForm.style.display = "none"
+        }
+    }
+</script>
 {% endblock %}

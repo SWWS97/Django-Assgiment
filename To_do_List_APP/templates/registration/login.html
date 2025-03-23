@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>로그인</title>
-</head>
+{% extends 'base.html' %}
+{% block content %}
 <h1><strong style="color:red">못봐 돌아가</strong><br>회원가입 하고와</h1>
 <body>
     <form method="POST">
@@ -14,5 +10,7 @@
             <a href="{% url 'signup' %}">회원가입</a>
         </button>
     </form>
-</body>
-</html>
+{% endblock %}
+{% block js %}
+    {% include 'form-js.html' %}
+{% endblock %}

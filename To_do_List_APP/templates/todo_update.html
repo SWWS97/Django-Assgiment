@@ -1,9 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>Todo 수정</h1>
-    <form method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button>수정하기</button>
-    </form>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+}
+</style>
+<div class="container" style="margin-top: 50px; width: 40vw">
+    {% if request.user.is_authenticated %}
+        <form class="form-control" method="POST" enctype="multipart/form-data">
+            <h2 class="title">Todo 수정하기</h2>
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button class="btn btn-primary">Update</button>
+        </form>
+    {% endif %}
+</div>
 {% endblock %}

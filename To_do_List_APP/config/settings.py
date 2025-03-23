@@ -42,8 +42,14 @@ OWN_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'django_extensions'
+    'django_extensions',
+    'django_summernote',
+    'django_cleanup',
 ]
+
+# 왜 Pillow는 INSTALLED_APPS 에 추가하지 않나요?
+# Pillow는 Django 애플리케이션의 구성 요소가 아니므로 `INSTALLED_APPS`에 추가되지 않으며, 단지 이미지 필드나 이미지 처리와 같은 기능을 제공하는 외부 라이브러리로 사용되기 때문입니다.
+# app의 구성요소로써 동작하는 라이브러리의 경우에만 INSTALLED_APPS 에 추가하여 장고에게 알려주어야 합니다.
 
 # Application definition
 
@@ -126,6 +132,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_DIR = BASE_DIR / 'static'
+
+STATICFILES_DIRS = [
+    STATIC_DIR,
+]
+
+STATIC_ROOT = BASE_DIR / '.static_root'
+
+# media
+MEDIA_URL = 'media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -138,3 +155,71 @@ LOGIN_URL = '/accounts/login/'
 
 # logout
 LOGOUT_REDIRECT_URL = '/todo/'
+
+
+# summernote
+SUMMERNOTE_CONFIG = {
+    # Or, you can set it to `False` to use SummernoteInplaceWidget by default - no iframe mode
+    # In this case, you have to load Bootstrap/jQuery sources and dependencies manually.
+    # Use this when you're already using Bootstrap/jQuery based themes.
+    # HTML 태그 또는 JS를 수정하지 못하도록 iframe 설정
+    'iframe': True,
+
+    # You can put custom Summernote settings
+    'summernote': {
+        # As an example, using Summernote Air-mode
+        # airMode 비활성화: 툴바를 항상 표시하도록 설정
+        'airMode': False,
+
+        # Change editor size
+        # 에디터의 사이즈 정의
+        'width': '100%',
+        'height': '480',
+
+        # Use proper language setting automatically (default)
+
+        # Toolbar customization
+        # https://summernote.org/deep-dive/#custom-toolbar-popover
+
+        # 에디터의 툴바 메뉴 정의
+        'toolbar': [
+            ['style', ['style']],                       # 스타일 설정
+            ['font', ['bold', 'underline', 'clear']],   # 글꼴 설정: 굵게, 밑줄, 지우기
+            ['color', ['color']],                       # 색상 설정
+            ['para', ['ul', 'ol', 'paragraph']],        # 문단 설정: 글머리 기호, 번호 매기기, 문단
+            ['table', ['table']],                       # 표 삽입
+            ['insert', ['link', 'picture', ]],          # 삽입 기능: 링크, 그림
+            ['view', ['fullscreen']],                   # 보기 설정: 전체 화면
+        ],
+
+        # Or, explicitly set language/locale for editor
+        'lang': 'ko-KR',    # 에디터의 언어를 한국어로 설정
+
+
+        # You can also add custom settings for external plugins
+        # 'print': {
+        #     'stylesheetUrl': '/some_static_folder/printable.css',
+        # },
+        'codemirror': {
+            'mode': 'htmlmixed',    # 코드미러의 모드를 htmlmixed로 설정
+            'lineNumbers': 'true',  # 코드미러에서 줄 번호를 표시
+            # You have to include theme file in 'css' or 'css_for_inplace' before using it.
+            'theme': 'monokai',     # 코드미러의 테마를 monokai로 설정
+        },
+    },
+
+    # Require users to be authenticated for uploading attachments.
+    'attachment_require_authentication': True,
+
+
+    # You can completely disable the attachment feature.
+    'disable_attachment': False,
+
+    # Set to `False` to return attachment paths in relative URIs.
+    'attachment_absolute_uri': True,
+
+    # test_func in summernote upload view. (Allow upload images only when user passes the test)
+    # https://docs.djangoproject.com/en/2.2/topics/auth/default/#django.contrib.auth.mixins.UserPassesTestMixin
+
+    # You can add custom css/js for SummernoteWidget.
+}

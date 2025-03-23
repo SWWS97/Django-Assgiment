@@ -1,55 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
-     <h1>Todo 목록</h1>
+    <div class="mt-2">
+        <h1 class="d-inline">Todo 목록</h1>
+        <a href="{% url 'todo:create' %}" class="float-end btn btn-sm btn-primary">생성</a>
+    </div>
 
-
-        <p style="text-align: right">
-            <a href="{% url 'todo:create' %}">생성</a>
-        </p>
+    <hr>
 
         {% for todo in object_list %}
-            <p>
-                <a href="{% url 'todo:info' todo.pk %}">  <!-- blog.id 이렇게 해도됨 !-->
+            <div class="my-1">
+                <a href="{% url 'todo:info' todo.pk %}" class="link-primary link-offset-2 link-underline-opacity-25 link-underline-opacity-100-hover">  <!-- blog.id 이렇게 해도됨 !-->
                     ({{ todo.id }}){{ todo.title }} <span>({{ todo.user.username }})</span>- <small>{{ todo.created_at | date:"Y-m-d" }}</small>
-                </a>
-            </p>
+
+            {% if todo.is_completed %}
+                <div class="list-group-item list-group-item-action">
+                    <img class="img-thumbnail" src="{{ todo.thumbnail.url }}" alt="썸네일이미지" style="width: 100px; height: 100px; object-fit: contain;">
+                    <a class="text-decoration-none text-black" href="{% url 'todo:info' todo.id %}">[{{ todo.user.username }}]{{ todo.title }} (Completed)</a>
+                </div>
+            {% else %}
+                <div class="list-group-item list-group-item-action">
+                    <img class="img-thumbnail" src="{{ todo.thumbnail.url }}" alt="썸네일이미지" style="width: 100px; height: 100px; object-fit: contain;">
+                    <a class="text-decoration-none text-black" href="{% url 'todo:info' todo.id %}">[{{ todo.user.username }}] {{ todo.title }}</a>
+                </div>
+            {% endif %}
+
         {% endfor %}
 
-    <form method="GET" style="margin-bottom: 10px;">
-        <input name="q" type="text" placeholder="검색어를 입력하세요." value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
-        <button>검색</button>
+                </a>
+            </div>
+
+    <form method="GET" class="my-3 d-flex">
+        <label>
+            <input class="form-control-sm" name="q" type="text" placeholder="검색어를 입력하세요." value="{% if request.GET.q %}{{ request.GET.q }}{% endif %}">
+        </label>
+        <button class="btn btn-sm btn-info ms-2">검색</button>
     </form>
 
-    <div>
-        {% if page_object.has_previous %}
-            <a href="?page=1{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&laquo; 첫번째</a>
-            <a href="?page={{ page_object.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">이전</a>
-        {% endif %}
-        {# 현재페이지 -2 > 1보다 크면 #}
-        {% if page_object.number|add:-2 > 1 %}
-            <a href="?page={{ page_object.number|add:-3 }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&hellip;</a>
-        {% endif %}
-
-        {# .page_range : 최대페이지 => 최대 페이지를 반복(10페이지까지 1~10) #}
-        {% for i in page_object.paginator.page_range %}
-            {# .number : 현재 페이지 => 최대페이지를 반복하면서 현재페이지와 같은 곳이면 #}
-            {% if page_object.number == i %}
-            {# 현재페이지라고 하라는 의미 #}
-            <span>(현재페이지)</span>
-        {#   현재페이지-3 < i < 현재페이지+3 사이에 있는 페이지를 보여주라는 뜻 #}
-            {% elif i > page_object.number|add:-3 and i < page_object.number|add:3 %}
-                <a href="?page={{ i }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">{{ i }}</a>
-            {% endif %}
-        {% endfor %}
-
-        {# 최대페이지(10페이지) > 5(현재 페이지) + 2 #}
-        {% if page_object.paginator.num_pages > page_object.number|add:2 %}
-            <a href="?page={{ page_object.number|add:3 }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">&hellip;</a>
-        {% endif %}
-
-        {% if page_object.has_next %}
-            <a href="?page={{ page_object.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">다음</a>
-            <a href="?page={{ page_object.paginator.num_pages }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">마지막 &raquo;</a>
-        {% endif %}
-    </div>
+    {% include 'pagination.html' %}
 {% endblock %}
