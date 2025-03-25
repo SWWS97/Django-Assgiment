@@ -1,5 +1,6 @@
 from io import BytesIO
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import models
 
@@ -16,7 +17,7 @@ class Todo(models.Model):
     is_completed = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     completed_image = models.ImageField('이미지', null=True, blank=True, upload_to='blog/%Y/%m/%d')
     thumbnail = models.ImageField('썸네일', null=True, blank=True, default='blog/%Y/%m/%d/thumbnail')
 
@@ -63,7 +64,7 @@ class Todo(models.Model):
 
 class Comment(models.Model):
     todo = models.ForeignKey(Todo, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comments')
     message = models.TextField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

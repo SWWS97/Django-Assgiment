@@ -9,18 +9,26 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import json
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+# 만들어둔 "secret.json" 파일을 읽어 오고
+with open(BASE_DIR / '.secret_config' / 'secret.json') as f:
+    config_secret_str = f.read()
+
+# "json" 딕셔너리 형태로 변환해서 사용한다
+SECRET = json.loads(config_secret_str)
+
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-b%#1nmhqi!+)w-xv&3fy#ilm_ny2n!!!71j3q0ty84ab!3)_p6'
+SECRET_KEY = SECRET["DJANGO_SECRET_KEY"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -155,6 +163,25 @@ LOGIN_URL = '/accounts/login/'
 
 # logout
 LOGOUT_REDIRECT_URL = '/todo/'
+
+
+# 기본적으로 장고에 있는 유저가 아니라 "AUTH_USER_MODEL"에 적힌 내가 따로 커스텀 한 "member.User"모델을
+# 사용할거 라는걸 장고에서 인식을 함
+# Auth
+AUTH_USER_MODEL = 'member.User' # migrate 하기 전에 항상 migrations 해주고 작업을 해야함
+
+# Email
+# from django.core.mail.backends.smtp import EmailBackend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.naver.com'   # 네이버 SMTP 서버명 적기
+EMAIL_USE_SSL = True            # 네이버 보안 연결을 하겠다
+EMAIL_PORT = 465                # 네이버 SMTP 포트 적기
+EMAIL_HOST_USER = SECRET["email"]['HOST_USER']   # "secret.json"에 적어둔 키값 user(이메일)
+EMAIL_HOST_PASSWORD = SECRET['email']['PASSWORD']   # "secret.json"에 적어둔 키값 password(비밀번호)
+
+# email login
+LOGIN_URL = '/users/login/'
+LOGOUT_REDIRECT_URL = '/users/logout/'
 
 
 # summernote
