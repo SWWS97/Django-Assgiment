@@ -1,0 +1,11 @@
+{% extends 'auth/base/base.html' %}
+{% block content %}
+    <div>
+        <h1 class="title">회원가입</h1>
+        <form method="POST">
+            {% csrf_token %}
+            {% include 'auth/include/form.html' %}
+            <button class="btn btn-primary">회원가입</button>
+        </form>
+    </div>
+{% endblock %}

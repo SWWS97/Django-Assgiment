@@ -17,6 +17,7 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth import urls
 from django.urls import path, include
 from todo.views import todo_list, todo_info, todo_create, todo_update, todo_delete
 from member.views import signup
@@ -29,10 +30,15 @@ urlpatterns = [
     path('fb/', include('todo.fbv_urls')),
 
     # login
-    path('accounts/', include('django.contrib.auth.urls')),   # django 내장기능
-    path('accounts/signup/', signup, name='signup'),
-    path('summernote/', include('django_summernote.urls')),
+    # path('accounts/', include('django.contrib.auth.urls')),   # django 내장기능
+    # path('accounts/signup/', signup, name='signup'),
+    # path('summernote/', include('django_summernote.urls')),
+
+    # email auth
+    path('users/', include('member.urls')),
 ]
 
 if settings.DEBUG:  # media(동적) 연결
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
